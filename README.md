@@ -34,6 +34,51 @@ HDFS使用场景：适合一次写入，多次读出，不支持文件修改，�
 ----
 >2.HDFS中的Shell操作（重点）
 -----------------
+>>hdfs dfs -命令 与 hadoop fs -命令 效果是一摸一样的，一般偏向于使用后者
+--------------------
+>>2.1 上传
+>>>hadoop fs -moveFromLocal(从本地仓库上传到集群，并删除源文件) 文件本地路径 /集群中的路径
+>>>haddop fs -copyFromLocal(从本地仓库上传到集群) 文件本地路径 /集群中的路径（在HDFS系统中的路径）
+>>>hadoop fs -put(效果和copyFromLocal一摸一样) 文件本地路径 /集群中的路径
+----------------------
+>>2.2 下载
+>>>hadoop fs -copyToLocal(从集群中下载到本地仓库) 集群中的路径 /本地路径
+>>>hadoop fs -get(效果和上相同)
+>>>hadoop fs -getmerge:合并下载多个文件，比如HDFS的目录 /user/atguigu/test下有多个文件:log.1, log.2,log.3,...
+>>>>实例代码：[atguigu@hadoop102 hadoop-3.1.3]$ hadoop fs -getmerge /user/atguigu/test/* ./zaiyiqi.txt
+------------
+>>2.3 其他常用命令
+>>>1）-ls: 显示目录信息
+>>>>[atguigu@hadoop102 hadoop-3.1.3]$ hadoop fs -ls /
+>>>2）-mkdir：在HDFS上创建目录
+>>>>[atguigu@hadoop102 hadoop-3.1.3]$ hadoop fs -mkdir -p /sanguo/shuguo
+>>>3）-cat：显示文件内容
+>>>>[atguigu@hadoop102 hadoop-3.1.3]$ hadoop fs -cat /sanguo/shuguo/kongming.txt
+>>>4）-chgrp 、-chmod、-chown：Linux文件系统中的用法一样，修改文件所属权限
+>>>>[atguigu@hadoop102 hadoop-3.1.3]$ hadoop fs  -chmod  666  /sanguo/shuguo/kongming.txt
+>>>>[atguigu@hadoop102 hadoop-3.1.3]$ hadoop fs  -chown  atguigu:atguigu   /sanguo/shuguo/kongming.txt
+>>>5）-cp ：从HDFS的一个路径拷贝到HDFS的另一个路径
+>>>>[atguigu@hadoop102 hadoop-3.1.3]$ hadoop fs -cp /sanguo/shuguo/kongming.txt /zhuge.txt
+>>>6）-mv：在HDFS目录中移动文件
+>>>>[atguigu@hadoop102 hadoop-3.1.3]$ hadoop fs -mv /zhuge.txt /sanguo/shuguo/
+>>>7）-tail：显示一个文件的末尾
+>>>>[atguigu@hadoop102 hadoop-3.1.3]$ hadoop fs -tail /sanguo/shuguo/kongming.txt
+>>>8）-rm：删除文件或文件夹
+>>>>[atguigu@hadoop102 hadoop-3.1.3]$ hadoop fs -rm /user/atguigu/test/jinlian2.txt
+>>>9）-rmdir：删除空目录
+>>>>[atguigu@hadoop102 hadoop-3.1.3]$ hadoop fs -mkdir /test
+>>>>[atguigu@hadoop102 hadoop-3.1.3]$ hadoop fs -rmdir /test
+>>>10）-du统计文件夹的大小信息
+>>>>[atguigu@hadoop102 hadoop-3.1.3]$ hadoop fs -du -s -h /user/atguigu/test
+2.7 K  /user/atguigu/test
+>>>>[atguigu@hadoop102 hadoop-3.1.3]$ hadoop fs -du  -h /user/atguigu/test
+1.3 K  /user/atguigu/test/README.txt
+15     /user/atguigu/test/jinlian.txt
+1.4 K  /user/atguigu/test/zaiyiqi.txt
+>>>11）-setrep：设置HDFS中文件的副本数量
+>>>>[atguigu@hadoop102 hadoop-3.1.3]$ hadoop fs -setrep 10 /sanguo/shuguo/kongming.txt
+>>>>这里设置的副本数只是记录在NameNode的元数据中，是否真的会有这么多副本，还得看DataNode的数量。因为目前只有3台设备，最多也就3个副本，只有节点数的增加到10台时，副本数才能达到10。
+---
 >3.HDFS客户端API操作（较为重要）
 ---------
 >4.HDFS中的读写过程、步骤(面试重点)
