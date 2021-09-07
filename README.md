@@ -1,2 +1,1 @@
-# Hadoop_study
-A normal student's study about hadoop
+一名正在学习大数据开发的普通学生
